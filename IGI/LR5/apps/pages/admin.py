@@ -9,6 +9,7 @@ class AboutCompanyAdmin(admin.ModelAdmin):
 class NewsAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_at',)
     search_fields = ('title',)
+    save_as = True
 
 @admin.register(FAQ)
 class FAQAdmin(admin.ModelAdmin):

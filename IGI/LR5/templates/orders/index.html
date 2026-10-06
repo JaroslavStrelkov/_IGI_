@@ -98,7 +98,26 @@
 
                 </a>
 
+
+
             {% endif %}
+
+            {% if user.is_superuser %}
+
+                <form method="post"action="{% url 'delete_order' order.id %}">
+                    {% csrf_token %}
+
+                    <button type="submit">
+
+                        Удалить заказ
+
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+
 
         {% endif %}
 

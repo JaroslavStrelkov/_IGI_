@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_erd_generator',
+    'djangomap',
 
     'apps.accounts',
     'apps.cars',

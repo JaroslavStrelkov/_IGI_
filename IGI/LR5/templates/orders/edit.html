@@ -2,139 +2,81 @@
 
 {% block content %}
 
-<h1>
-    Редактирование заказа
-</h1>
+<h1>Редактирование заказа</h1>
+
+{% if errors.non_field_errors %}
+    <div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+        {% for error in errors.non_field_errors %}
+            {{ error }}
+        {% endfor %}
+    </div>
+{% endif %}
 
 <form method="POST">
-
     {% csrf_token %}
 
     {% for car in cars %}
-
-        <div
-            style="
-                border:1px solid black;
-                padding:10px;
-                margin-bottom:10px;
-            "
-        >
-
-            <h3>
-
-                {{ car.name }}
-
-            </h3>
-
+        <div style="border:1px solid black; padding:10px; margin-bottom:10px;">
+            <h3>{{ car.name }}</h3>
+            <p>Цена: {{ car.price }}</p>
+            
             <p>
-
-                Цена:
-
-                {{ car.price }}
-
-            </p>
-
-            <p>
-
-                <input
-                    type="checkbox"
-                    name="cars"
+                <input 
+                    type="checkbox" 
+                    name="cars" 
                     value="{{ car.id }}"
-
                     {% for item in order.items.all %}
-
                         {% if item.car.id == car.id %}
-
                             checked
-
                         {% endif %}
-
                     {% endfor %}
                 >
-
                 Выбрать
-
             </p>
-
+            
             <p>
-
                 Количество:
-
-                <input
-                type="number"
-                name="quantity_{{ car.id }}"
-                min="1"
-
-                value="{% for item in order.items.all %}{% if item.car.id == car.id %}{{ item.quantity }}{% endif %}{% endfor %}"
-            >
+                <input 
+                    type="number" 
+                    name="quantity_{{ car.id }}" 
+                    min="1"
+                    value="{% for item in order.items.all %}{% if item.car.id == car.id %}{{ item.quantity }}{% endif %}{% endfor %}"
+                >
             </p>
-
         </div>
-
     {% endfor %}
 
     <p>
-
-        Дата доставки:
-
-        <input
-            type="date"
-            name="delivery_date"
+        <label>Дата доставки:</label>
+        <input 
+            type="date" 
+            name="delivery_date" 
             value="{{ order.delivery_date|date:'Y-m-d' }}"
         >
-
+        
+        {% if errors.delivery_date %}
+            <div style="color: red; margin-top: 5px; font-size: 14px;">
+                {% for error in errors.delivery_date %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
     </p>
 
     {% if is_employee or is_admin %}
-
         <p>
-
-            Статус:
-
+            <label>Статус:</label>
             <select name="status">
-
-                <option value="new">
-
-                    Новый
-
-                </option>
-
-                <option value="confirmed">
-
-                    Подтвержден
-
-                </option>
-
-                <option value="in_delivery">
-
-                    Доставляется
-
-                </option>
-
-                <option value="completed">
-
-                    Завершен
-
-                </option>
-
-                <option value="cancelled">
-
-                    Отменен
-
-                </option>
-
+                <option value="new" {% if order.status == 'new' %}selected{% endif %}>Новый</option>
+                <option value="confirmed" {% if order.status == 'confirmed' %}selected{% endif %}>Подтвержден</option>
+                <option value="in_delivery" {% if order.status == 'in_delivery' %}selected{% endif %}>Доставляется</option>
+                <option value="completed" {% if order.status == 'completed' %}selected{% endif %}>Завершен</option>
+                <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Отменен</option>
             </select>
-
         </p>
-
     {% endif %}
 
-    <button type="submit">
-
-        Сохранить
-
-    </button>
-
+    <button type="submit">Сохранить</button>
 </form>
 
 {% endblock %}

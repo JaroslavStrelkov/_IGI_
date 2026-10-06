@@ -1,0 +1,173 @@
+erDiagram
+LogEntry {
+  integer id pk
+  text action_time 
+  integer user_id 
+  integer content_type_id 
+  text object_id 
+  varchar object_repr 
+  smallint_unsigned action_flag 
+  text change_message 
+}
+Permission {
+  integer id pk
+  varchar name 
+  integer content_type_id 
+  varchar codename 
+}
+Group {
+  integer id pk
+  varchar name 
+}
+User {
+  integer id pk
+  varchar password 
+  text last_login 
+  bool is_superuser 
+  varchar username 
+  varchar first_name 
+  varchar last_name 
+  varchar email 
+  bool is_staff 
+  bool is_active 
+  text date_joined 
+}
+ContentType {
+  integer id pk
+  varchar app_label 
+  varchar model 
+}
+Session {
+  varchar session_key pk
+  text session_data 
+  text expire_date 
+}
+Profile {
+  integer id pk
+  varchar phone_number 
+  integer user_id 
+  varchar role 
+  text birth_date 
+  varchar city 
+  varchar avatar 
+  text created_at 
+  text updated_at 
+}
+Manufacturer {
+  integer id pk
+  varchar name 
+  varchar country 
+  text created_at 
+}
+CarCategory {
+  integer id pk
+  varchar name 
+}
+Feature {
+  integer id pk
+  varchar name 
+}
+Car {
+  integer id pk
+  integer category_id 
+  integer manufacturer_id 
+  varchar name 
+  text description 
+  decimal price 
+  integer_unsigned year 
+  integer_unsigned mileage 
+  varchar transmission 
+  varchar fuel_type 
+  varchar image 
+  bool is_available 
+  text created_at 
+  text updated_at 
+}
+Order {
+  integer id pk
+  integer customer_id 
+  integer employee_id 
+  varchar status 
+  text sale_date 
+  text delivery_date 
+  decimal total_price 
+  text comment 
+  text created_at 
+  text updated_at 
+  integer promo_code_id 
+}
+OrderItem {
+  integer id pk
+  integer order_id 
+  integer car_id 
+  integer_unsigned quantity 
+  decimal price 
+}
+Review {
+  integer id pk
+  integer user_id 
+  integer rating 
+  text text 
+  text created_at 
+  text updated_at 
+}
+PromoCode {
+  integer id pk
+  varchar code 
+  integer_unsigned discount_percent 
+  bool is_active 
+  text valid_until 
+  text created_at 
+}
+AboutCompany {
+  integer id pk
+  varchar title 
+  text description 
+  text history 
+  varchar logo 
+  text created_at 
+}
+News {
+  integer id pk
+  varchar title 
+  text short_description 
+  text content 
+  varchar image 
+  text created_at 
+}
+FAQ {
+  integer id pk
+  varchar question 
+  text answer 
+  text created_at 
+}
+EmployeeContact {
+  integer id pk
+  varchar full_name 
+  varchar position 
+  varchar phone 
+  varchar email 
+  varchar photo 
+}
+Vacancy {
+  integer id pk
+  varchar title 
+  text description 
+  decimal salary 
+  text created_at 
+}
+Feature }|--|{ Car: ""
+Profile ||--|| User: ""
+Review }|--|| User: ""
+Group }|--|{ User: ""
+Group }|--|{ Permission: ""
+LogEntry }|--|| User: ""
+LogEntry }|--|| ContentType: ""
+OrderItem }|--|| Order: ""
+OrderItem }|--|| Car: ""
+Car }|--|| CarCategory: ""
+Car }|--|| Manufacturer: ""
+Order }|--|| User: ""
+Order }|--|| PromoCode: ""
+Permission }|--|{ User: ""
+Permission }|--|| ContentType: ""

@@ -58,9 +58,10 @@ def external_api_page(request):
 def timezone_page(request):
     utc_time = timezone.now().astimezone(dt_timezone.utc)
     local_time = timezone.localtime()
+    timezone_name = timezone.get_current_timezone_name()
     current_year = local_time.year
     current_month = local_time.month
     text_calendar = calendar.month(current_year,current_month)
-    context = {'utc_time': utc_time, 'local_time': local_time, 'calendar': text_calendar,}
+    context = {'utc_time': utc_time, 'local_time': local_time, 'timezone_name' : timezone_name, 'calendar': text_calendar,}
 
     return render(request, 'pages/timezone.html', context) 

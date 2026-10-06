@@ -3,39 +3,19 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from apps.accounts.models import Profile
-from apps.cars.models import (
-    Car,
-    CarCategory,
-    Manufacturer,
-)
+from apps.cars.models import Car, CarCategory, Manufacturer
 
 
 class CarTest(TestCase):
 
     def setUp(self):
 
-        self.user = User.objects.create_user(
-            username='employee',
-            password='12345678Qq'
-        )
-
+        self.user = User.objects.create_user(username='employee', password='12345678Qq')
         self.user.profile.role = 'employee'
         self.user.profile.save()
-
-        self.client.login(
-            username='employee',
-            password='12345678Qq'
-        )
-
-        self.category = CarCategory.objects.create(
-            name='Sport'
-        )
-
-        self.manufacturer = Manufacturer.objects.create(
-            name='BMW',
-            country='Germany'
-        )
-
+        self.client.login(username='employee', password='12345678Qq')
+        self.category = CarCategory.objects.create(name='Sport')
+        self.manufacturer = Manufacturer.objects.create(name='BMW', country='Germany')
         self.car = Car.objects.create(
             name='BMW M4',
             description='Fast car',
@@ -47,25 +27,14 @@ class CarTest(TestCase):
             category=self.category,
             manufacturer=self.manufacturer,
         )
-
     def test_car_created(self):
-
-        self.assertEqual(
-            self.car.name,
-            'BMW M4'
-        )
+        self.assertEqual(self.car.name, 'BMW M4')
 
     def test_car_price(self):
-
-        self.assertEqual(
-            self.car.price,
-            300000
-        )
+        self.assertEqual(self.car.price, 300000)
 
     def test_edit_car(self):
-
-        response = self.client.post(
-            f'/cars/edit/{self.car.id}/',
+        response = self.client.post(f'/cars/edit/{self.car.id}/',
             {
                 'name': 'BMW M5',
                 'description': 'Updated',
@@ -80,27 +49,14 @@ class CarTest(TestCase):
         )
 
         self.car.refresh_from_db()
-
-        self.assertEqual(
-            self.car.name,
-            'BMW M5'
-        )
+        self.assertEqual(self.car.name, 'BMW M5')
 
     def test_delete_car(self):
-
-        response = self.client.get(
-            f'/cars/delete/{self.car.id}/'
-        )
-
-        self.assertEqual(
-            Car.objects.count(),
-            0
-        )
+        response = self.client.get(f'/cars/delete/{self.car.id}/')
+        self.assertEqual(Car.objects.count(),0)
 
     def test_create_car(self):
-
-        response = self.client.post(
-            '/cars/create/',
+        response = self.client.post('/cars/create/',
             {
                 'name': 'Audi RS6',
                 'description': 'Audi car',
@@ -114,7 +70,4 @@ class CarTest(TestCase):
             }
         )
 
-        self.assertEqual(
-            Car.objects.count(),
-            2
-        )
+        self.assertEqual(Car.objects.count(), 2)

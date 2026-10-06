@@ -2,95 +2,74 @@
 
 {% block content %}
 
-<h1>
-    Оформление заказа
-</h1>
+<h1>Оформление заказа</h1>
+{% if errors.non_field_errors %}
+    <div style="background-color: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+        {% for error in errors.non_field_errors %}
+            ❌ {{ error }}
+        {% endfor %}
+    </div>
+{% endif %}
 
 <form method="POST">
-
     {% csrf_token %}
 
     {% for car in cars %}
-
-        <div
-            style="
-                border:1px solid black;
-                padding:10px;
-                margin-bottom:10px;
-            "
-        >
-
-            <h3>
-
-                {{ car.name }}
-
-            </h3>
-
+        <div style="border:1px solid black; padding:10px; margin-bottom:10px;">
+            <h3>{{ car.name }}</h3>
+            <p>Цена: {{ car.price }}</p>
+            
             <p>
-
-                Цена:
-
-                {{ car.price }}
-
-            </p>
-
-            <p>
-
-                <input
-                    type="checkbox"
-                    name="cars"
+                <input 
+                    type="checkbox" 
+                    name="cars" 
                     value="{{ car.id }}"
+                    {% if car.id|stringformat:"s" in form_data.selected_cars %}
+                        checked
+                    {% endif %}
                 >
-
                 Добавить в заказ
-
             </p>
-
+            
             <p>
-
                 Количество:
-
-                <input
-                    type="number"
-                    name="quantity_{{ car.id }}"
-                    value="1"
+                <input 
+                    type="number" 
+                    name="quantity_{{ car.id }}" 
+                    value="{% if car.id|stringformat:'s' in form_data.selected_cars %}{{ form_data.quantity }}{% else %}1{% endif %}" 
                     min="1"
                 >
-
             </p>
-
         </div>
-
     {% endfor %}
 
     <p>
-
-        Дата доставки:
-
-        <input
-            type="date"
-            name="delivery_date"
+        <label>Дата доставки:</label>
+        <input 
+            type="date" 
+            name="delivery_date" 
+            value="{{ form_data.delivery_date|default:'' }}"
         >
-
+        
+        {% if errors.delivery_date %}
+            <div style="color: red; margin-top: 5px; font-size: 14px;">
+                {% for error in errors.delivery_date %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
     </p>
 
     <p>
-
-        Промокод:
-
-        <input
-            type="text"
-            name="promo_code"
+        <label>Промокод:</label>
+        <input 
+            type="text" 
+            name="promo_code" 
+            value="{{ form_data.promo_code|default:'' }}"
         >
-
     </p>
 
-    <button type="submit">
-
-        Оформить заказ
-
-    </button>
-
+    <button type="submit">Оформить заказ</button>
 </form>
 
 {% endblock %}

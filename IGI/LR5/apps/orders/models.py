@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from apps.cars.models import Car
 from apps.promo.models import PromoCode
+from django.core.exceptions import ValidationError
 
 class Order(models.Model):
     STATUS_CHOICES = [('new', 'Новый'), ('confirmed', 'Подтвержден'), ('in_delivery', 'Доставляется'), ('completed', 'Завершен'), ('cancelled', 'Отменен')]
@@ -16,6 +17,28 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     promo_code = models.ForeignKey(PromoCode, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def clean(self):
+        if self.delivery_date and self.sale_date:
+            delivery = self.delivery_date if hasattr(self.delivery_date, 'date') else self.delivery_date
+            if hasattr(delivery, 'date'):
+                delivery = delivery.date()
+            
+            sale = self.sale_date if hasattr(self.sale_date, 'date') else self.sale_date
+            if hasattr(sale, 'date'):
+                sale = sale.date()
+            if isinstance(delivery, str):
+                from datetime import datetime
+                delivery = datetime.strptime(delivery, '%Y-%m-%d').date()
+            if isinstance(sale, str):
+                from datetime import datetime
+                sale = datetime.strptime(sale, '%Y-%m-%d').date()
+            if delivery < sale:
+                raise ValidationError({'delivery_date': 'Дата доставки не может быть раньше даты продажи'})
+            
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'Order #{self.id}'
